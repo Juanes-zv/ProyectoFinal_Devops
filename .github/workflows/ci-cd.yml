@@ -17,7 +17,7 @@ jobs:
     - name: Configurar Python
       uses: actions/setup-python@v5
       with:
-        python-python-version: '3.12'
+        python-version: '3.12'
 
     - name: Instalar dependencias
       run: |
@@ -42,7 +42,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Configurar Docker Buildx
-      uses: uses/docker-setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v3
 
     - name: Validar construccion de imagen Multi-stage
       run: |
