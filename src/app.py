@@ -1,9 +1,52 @@
 from flask import Flask, request, jsonify
 import sqlite3
 import os
+import logging
+import json
+import time
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+
+
+# --- CONFIGURACIÓN DE LOGS ESTRUCTURADOS ---
+class JsonFormatter(logging.Formatter):
+    def format(self, record):
+        log_record = {
+            "timestamp": self.formatTime(record, self.datefmt),
+            "level": record.levelname,
+            "message": record.getMessage(),
+            "module": record.module
+        }
+        return json.dumps(log_record)
+
+
+logger = logging.getLogger("todo-api")
+handler = logging.StreamHandler()
+handler.setFormatter(JsonFormatter())
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
 DB_PATH = os.environ.get("DB_PATH", "tasks.db")
+
+# --- MÉTRICAS DE PROMETHEUS ---
+REQUEST_COUNT = Counter('api_requests_total', 'Total de peticiones', ['method', 'endpoint', 'http_status'])
+REQUEST_LATENCY = Histogram('api_request_latency_seconds', 'Latencia de las peticiones', ['method', 'endpoint'])
+
+
+@app.before_request
+def start_timer():
+    request.start_time = time.time()
+
+
+@app.after_request
+def log_and_metric(response):
+    if hasattr(request, 'start_time'):
+        latency = time.time() - request.start_time
+        REQUEST_LATENCY.labels(method=request.method, endpoint=request.path).observe(latency)
+
+    REQUEST_COUNT.labels(method=request.method, endpoint=request.path, http_status=response.status_code).inc()
+    logger.info(f"{request.method} {request.path} - {response.status_code}")
+    return response
 
 
 def get_db():
@@ -112,6 +155,23 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
     return jsonify({"message": "Tarea eliminada"}), 200
+
+
+# --- ENDPOINTS DE OBSERVABILIDAD ---
+@app.route('/health', methods=['GET'])
+def health():
+    try:
+        conn = get_db()
+        conn.execute("SELECT 1")
+        conn.close()
+        return jsonify({"status": "UP", "database": "connected"}), 200
+    except Exception as e:
+        return jsonify({"status": "DOWN", "error": str(e)}), 500
+
+
+@app.route('/metrics', methods=['GET'])
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 
 if __name__ == "__main__":
