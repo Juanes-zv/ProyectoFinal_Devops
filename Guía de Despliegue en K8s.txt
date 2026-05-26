@@ -1,0 +1,39 @@
+# Guía Rápida: Despliegue y Verificación en Kubernetes
+
+¡Hola! Para desplegar el proyecto completo y visualizar la observabilidad en tu clúster de Kubernetes, sigue estos pasos:
+
+## 1. Despliegue de los servicios
+Asegúrate de estar en la raíz del repositorio y ejecuta los siguientes comandos para aplicar todos los manifiestos:
+
+```bash
+# Aplicar configuración de la API y Observabilidad
+kubectl apply -f k8s/configmap.yml
+kubectl apply -f k8s/deployment.yml
+kubectl apply -f k8s/service.yml
+
+# Aplicar configuración de Prometheus y Grafana
+kubectl apply -f k8s/prometheus-configmap.yml
+kubectl apply -f k8s/prometheus-deployment.yml
+kubectl apply -f k8s/grafana-deployment.yml
+```
+
+## 2. Verificar los pods
+Espera unos momentos a que todos los pods estén en estado `Running`:
+
+```bash
+kubectl get pods
+```
+
+## 3. Acceso a los servicios
+Dependiendo de tu entorno de Kubernetes (Minikube, Kind, Cloud), los servicios tipo `LoadBalancer` te darán una IP externa.
+
+*   **API Principal:** Accede al puerto `80` (o el puerto asignado por el LoadBalancer).
+    *   Verificar API: `http://<IP-SERVICIO>/`
+    *   Verificar Salud: `http://<IP-SERVICIO>/health`
+*   **Prometheus:** Accede al puerto `9090` para verificar que está capturando las métricas de `todo-api`.
+    *   `http://<IP-PROMETHEUS>:9090`
+*   **Grafana:** Accede al puerto `3000`.
+    *   `http://<IP-GRAFANA>:3000`
+    *   **Credenciales:** usuario `admin` / contraseña `admin`.
+
+¡Listo! Con esto el ecosistema está desplegado y visualizable.

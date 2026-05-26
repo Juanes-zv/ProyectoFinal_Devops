@@ -1,0 +1,31 @@
+Guía Rápida para el Compañero: Despliegue en K8s 🚀
+
+¡Qué más! Aquí tienes los pasos para levantar el ecosistema completo en un clúster de Kubernetes (Minikube, Kind o cualquier clúster).
+
+1. Requisitos previos:
+   - Tener `kubectl` configurado y apuntando a tu clúster.
+   - Acceso a Internet para descargar las imágenes (Prometheus/Grafana).
+
+2. Despliegue automático:
+   He creado un script para automatizar todo el proceso. Simplemente navega a la raíz del proyecto y ejecuta:
+
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+   Este script aplicará todos los manifiestos (`deployment`, `service`, `configmap`) en el orden correcto.
+
+3. Verificar los servicios:
+   Una vez ejecutado, puedes verificar que todo esté corriendo con:
+   ```bash
+   kubectl get pods
+   kubectl get svc
+   ```
+
+4. Acceso:
+   - API: Expuesta vía LoadBalancer (o puerto 80).
+   - Prometheus: http://<IP>:9090
+   - Grafana: http://<IP>:3000 (Usuario: admin, Password: admin)
+
+¡Cualquier duda, revisa la documentación en la carpeta /docs!
