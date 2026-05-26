@@ -21,6 +21,6 @@ La API incluye:
 - Endpoint `/metrics`: Expone métricas para Prometheus.
 
 ### Observabilidad Avanzada (Prometheus y Grafana)
-Se han añadido manifiestos en `k8s/` para desplegar:
-- **Prometheus**: Recolecta métricas automáticamente de la API. Acceso: `http://<IP-Cluster>:9090`
-- **Grafana**: Visualización de métricas. Acceso: `http://<IP-Cluster>:3000` (usuario: `admin`, contraseña: `admin`).
+Se incluye todo el stack de observabilidad en el `docker-compose.yml`:
+- **Prometheus**: Recolecta métricas automáticamente de la API. Acceso: `http://localhost:9090`
+- **Grafana**: Visualización de métricas. Acceso: `http://localhost:3000` (usuario: `admin`, contraseña: `admin`).
