@@ -22,12 +22,16 @@ jobs:
     - name: Instalar dependencias
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
+        pip install flake8 pytest pip-audit
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Ejecutar Linter (Flake8)
       run: |
         flake8 . --statistics
+
+    - name: Auditoría de Seguridad (pip-audit)
+      run: |
+        pip-audit
 
     - name: Ejecutar Pruebas Unitarias (Pytest)
       run: |
