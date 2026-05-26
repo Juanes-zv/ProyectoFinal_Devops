@@ -18,5 +18,9 @@ Seguimos una estrategia de ramas basada en características:
 La API incluye:
 - Logs estructurados en formato JSON.
 - Endpoint `/health`: Verifica el estado de la conexión a la base de datos.
-- Endpoint `/metrics`: Expone métricas para Prometheus (latencia, contador de peticiones).
-- Implementación de `prometheus_client` en `src/app.py`.
+- Endpoint `/metrics`: Expone métricas para Prometheus.
+
+### Observabilidad Avanzada (Prometheus y Grafana)
+Se han añadido manifiestos en `k8s/` para desplegar:
+- **Prometheus**: Recolecta métricas automáticamente de la API. Acceso: `http://<IP-Cluster>:9090`
+- **Grafana**: Visualización de métricas. Acceso: `http://<IP-Cluster>:3000` (usuario: `admin`, contraseña: `admin`).
