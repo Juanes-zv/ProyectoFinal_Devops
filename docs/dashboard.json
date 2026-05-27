@@ -1,0 +1,17 @@
+{
+  "dashboard": {
+    "title": "To-Do API Monitor",
+    "panels": [
+      {
+        "title": "Peticiones por Segundo",
+        "type": "timeseries",
+        "targets": [{ "expr": "rate(api_requests_total[1m])", "refId": "A" }]
+      },
+      {
+        "title": "Latencia P95 (ms)",
+        "type": "timeseries",
+        "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(api_request_latency_seconds_bucket[5m])) by (le)) * 1000", "refId": "B" }]
+      }
+    ]
+  }
+}
